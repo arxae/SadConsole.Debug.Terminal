@@ -12,6 +12,7 @@ public struct TerminalCommandParameterHint
     public string Name;
     public string Description;
     public string Type;
+    public bool Optional;
 }
 
 public class TerminalCommandArgs : TerminalCommand

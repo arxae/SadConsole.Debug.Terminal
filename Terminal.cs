@@ -23,13 +23,23 @@ public static class Terminal
         },
         new TerminalCommandArgs
         {
-            Name = "verbose",
-            Description = "Logs a message with the verbose level",
+            Name = "print",
+            Description = "Prints a message to the terminal. If no log level is provided, it defaults to Information",
             ParameterHint = [
-                new TerminalCommandParameterHint { Name = "message", Description = "The message to log", Type = "string" }
+                new TerminalCommandParameterHint { Name = "level", Description = "The log level to print the message as", Type = "LogLevel", Optional = true },
+                new TerminalCommandParameterHint { Name = "message", Description = "The message to print", Type = "string" }
             ],
-            Action = (args) => Verbose(string.Join(" ", args))
-        },
+            Action = (args) => 
+            {
+                int skip = 1;
+                if (Enum.TryParse(args[0], true, out LogLevel level) == false)
+                {
+                    level = LogLevel.Information;
+                    skip = 0;
+                }
+                AddMessage(string.Join(" ", args.Skip(skip)), level);
+            }
+        }
     ];
 
     // Logging
@@ -124,7 +134,8 @@ public static class Terminal
             {
                 foreach (TerminalCommandParameterHint hint in argsCommand.ParameterHint)
                 {
-                    AddMessage($"\t\t{hint.Name} - {hint.Description} ({hint.Type})", LogLevel.Information, displayFlat: true);
+                    AddMessage($"\t\t{hint.Name} - {hint.Description} ({hint.Type}){(hint.Optional ? " (Optional)" : string.Empty)}"
+                        , LogLevel.Information, displayFlat: true);
                 }
             }
         }
