@@ -162,19 +162,20 @@ partial class TerminalView : ImGuiObjectBase
             }
             string propertyName = property.Name;
             string propertyType = GetFriendlyTypeName(property.PropertyType);
+            string accessLevel = property.GetMethod.IsPublic ? "public" : property.GetMethod.IsPrivate ? "private" : "protected";
 
             if (value is System.Collections.IEnumerable enumerable && value is not string)
             {
                 if (value == null)
                 {
-                    ImGui.TextColored(Terminal.Configuration.ColorPalette["inspectorCollection"], $"{propertyName} ({propertyType}) (Null)");
+                    ImGui.TextColored(Terminal.Configuration.ColorPalette["inspectorCollection"], $"{propertyName} ({propertyType}, {accessLevel}) (Null)");
                 }
                 else
                 {
                     bool isEmpty = !enumerable.GetEnumerator().MoveNext();
                     string suffix = isEmpty ? "(Empty)" : string.Empty;
                     ImGui.PushStyleColor(ImGuiCol.Text, Terminal.Configuration.ColorPalette["inspectorCollection"]);
-                    if (ImGui.TreeNode($"{propertyName} ({propertyType}) {suffix}##{propertyName}"))
+                    if (ImGui.TreeNode($"{propertyName} ({propertyType}, {accessLevel}) {suffix}##{propertyName}"))
                     {
                         ImGui.PopStyleColor();
                         if (!isEmpty)
@@ -208,9 +209,9 @@ partial class TerminalView : ImGuiObjectBase
             }
             else if (value.GetType().IsPrimitive || value.GetType() is string)
             {
-                ImGui.Text($"{propertyName} ({propertyType}): {value}");
+                ImGui.Text($"{propertyName} ({propertyType}, {accessLevel}): {value}");
             }
-            else if (ImGui.TreeNode($"{propertyName} ({propertyType})"))
+            else if (ImGui.TreeNode($"{propertyName} ({propertyType}, {accessLevel})"))
             {
                 DisplayObjectTree(value);
                 ImGui.TreePop();
@@ -228,8 +229,20 @@ partial class TerminalView : ImGuiObjectBase
             object value = field.GetValue(obj) ?? "null";
             string fieldName = field.Name;
             string fieldType = GetFriendlyTypeName(field.FieldType);
+            string accessLevel = field.IsPublic ? "public" : field.IsPrivate ? "private" : "protected";
+            if (field.IsStatic) accessLevel += ", static";
 
-            ImGui.TextColored(Terminal.Configuration.ColorPalette["inspectorBackingField"], $"{fieldName} ({fieldType}): {value}");
+            Vector4 color = Terminal.Configuration.ColorPalette["inspectorBackingField"];
+            if (field.IsPrivate)
+            {
+                color = Terminal.Configuration.ColorPalette["inspectorPrivateField"];
+            }
+            else if (field.IsStatic)
+            {
+                color = Terminal.Configuration.ColorPalette["inspectorStaticField"];
+            }
+
+            ImGui.TextColored(color, $"{fieldName} ({fieldType}, {accessLevel}): {value}");
         }
     }
 

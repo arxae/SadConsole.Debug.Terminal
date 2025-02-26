@@ -9,12 +9,12 @@ public class TerminalConfiguration
     public bool AutoScroll = true;
     public bool ShowFilterBar = true;
     public bool DisplayBackingFields = false;
-    public string TimestampFormat = @"hh\:mm\:ss\:fff";
-    public float MessageSpacing = 0f;
-    public string TerminalAttachmentPoint = ID_RIGHT_PANEL;
     public bool DumpFiltered = false;
     public bool ShowPrivateFields = false;
     public bool ShowStaticFields = false;
+    public string TimestampFormat = @"hh\:mm\:ss\:fff";
+    public string TerminalAttachmentPoint = ID_RIGHT_PANEL;
+    public float MessageSpacing = 0f;
 
     public const string ID_LEFT_PANEL = "Scene##LeftPanel";
     public const string ID_RIGHT_PANEL = "Previews##RightPanel";
@@ -30,6 +30,8 @@ public class TerminalConfiguration
         { LogLevel.Fatal.ToString(), new(1f, 0, 0f, 1f) },
         {"inspectorBackingField", new(0.5f, 0.5f, 0.5f, 1f)},
         {"inspectorCollection", new(0.035f, 0.4f, 1f, 1f)},
+        {"inspectorPrivateField", new(0.990f, 0.422f, 0.0693f, 1f)},
+        {"inspectorStaticField", new(0.0693f, 0.990f, 0.652f, 1f)}
     };
 
     public Dictionary<LogLevel, bool> EnabledInspectors { get; set; } = new()
